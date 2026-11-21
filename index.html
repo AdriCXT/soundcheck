@@ -58,7 +58,7 @@ footer{text-align:center;font-size:11px;color:var(--muted);padding:0 20px 30px}
 <header>
   <div class="ov">Probe · Soundcheck</div>
   <h1>Klingt das richtig?</h1>
-  <p>Klarinette &amp; Flügel – einmal durchhören, bitte.</p>
+  <p>Klarinette, Saxophon &amp; Flügel – einmal durchhören, bitte.</p>
 </header>
 <main>
   <div class="card">
@@ -73,6 +73,19 @@ footer{text-align:center;font-size:11px;color:var(--muted);padding:0 20px 30px}
       <button id="cMel">▶ Kurze Melodie</button>
     </div>
     <div class="hint">Tipp: Am iPhone muss der Lautlos-Schalter aus sein.</div>
+  </div>
+
+  <div class="card">
+    <h2>Saxophon</h2>
+    <div class="sub">Altsaxophon – jeder Ton einzeln antippen. Lange drücken markiert einen falschen Ton.</div>
+    <div class="load" id="sLoad">Lade Aufnahmen …</div>
+    <div class="row" id="sNotes"></div>
+    <div class="ctl">
+      <button class="pri" id="sScale">▶ Tonleiter</button>
+      <button id="sLong">▶ Langer Ton (A)</button>
+      <button id="sJazz">▶ Jazz-Lick</button>
+      <button id="sMel">▶ Kurze Melodie</button>
+    </div>
   </div>
 
   <div class="card">
@@ -110,7 +123,7 @@ function rev(c,len,dec,wetv){const g=c.createGain(),n=Math.floor(c.sampleRate*le
   for(let ch=0;ch<2;ch++){const d=ir.getChannelData(ch);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,dec)}
   const cv=c.createConvolver();cv.buffer=ir;const w=c.createGain();w.gain.value=wetv;g.connect(c.destination);g.connect(cv);cv.connect(w);w.connect(c.destination);return g}
 const getBus=c=>bus||(bus=rev(c,1.4,3.2,.16)),getPBus=c=>pbus||(pbus=rev(c,4.2,2.2,.55));
-const buf={clar:{},piano:{}};
+const buf={clar:{},piano:{},sax:{}};
 function load(kind,list,el){const c=audio();let n=0;return Promise.all(list.map(m=>fetch(`sounds/${kind==="clar"?"clarinet":kind}-${name(m)}.mp3`).then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()})
   .then(a=>new Promise((res,rej)=>c.decodeAudioData(a,res,rej))).then(b=>{buf[kind][m]=b;el.textContent=`Lade Aufnahmen … ${++n}/${list.length}`}).catch(()=>{})))
   .then(()=>{const k=Object.keys(buf[kind]).length;el.textContent=k?`✓ ${k} echte Aufnahmen geladen`:"Aufnahmen konnten nicht geladen werden"})}
@@ -121,7 +134,7 @@ function play(kind,m,when=0,dur=null,vol=.9){const c=audio(),b=buf[kind][m];if(!
 function stopV(v,fast){if(!v)return;const c=audio(),t=c.currentTime;v.g.gain.cancelScheduledValues(t);v.g.gain.setValueAtTime(v.g.gain.value,t);v.g.gain.exponentialRampToValueAtTime(.0001,t+(fast?.05:.16));try{v.s.stop(t+.25)}catch(e){}}
 const bad=new Set();
 function mark(id,el){bad.has(id)?bad.delete(id):bad.add(id);el.classList.toggle("bad",bad.has(id));syncFb();toast(bad.has(id)?`${id.split(":")[1]} als falsch markiert`:"Markierung entfernt");try{navigator.vibrate&&navigator.vibrate(20)}catch(e){}}
-function syncFb(){const ta=$("#fb"),keep=ta.value.split("\n").filter(l=>!l.startsWith("• "));const L=[...bad].sort().map(id=>{const [k,n]=id.split(":");return `• ${k==="clar"?"Klarinette":"Flügel"} ${n} klingt nicht richtig`});
+function syncFb(){const ta=$("#fb"),keep=ta.value.split("\n").filter(l=>!l.startsWith("• "));const L=[...bad].sort().map(id=>{const [k,n]=id.split(":");return `• ${k==="clar"?"Klarinette":k==="sax"?"Saxophon":"Flügel"} ${n} klingt nicht richtig`});
   ta.value=[...L,...keep].join("\n").replace(/^\n+/,"")}
 function longPress(el,onShort,onLong){let t=null,long=false;el.addEventListener("pointerdown",e=>{long=false;t=setTimeout(()=>{long=true;onLong()},600);onShort(e)});
   ["pointerup","pointerleave","pointercancel"].forEach(ev=>el.addEventListener(ev,()=>clearTimeout(t)))}
@@ -134,6 +147,15 @@ $("#cScale").onclick=()=>{audio();seq([60,62,64,65,67,69,71,72],.42,.38)};
 $("#cLong").onclick=()=>{audio();play("clar",69,0,2.6)};
 $("#cMel").onclick=()=>{audio();seq([67,72,76,79,76,72,74,72],.3,.28)};
 $("#cElise").onclick=()=>{audio();seq([76,75,76,75,76,71,74,72,69,0,60,64,69,71,0,64,68,71,72],.28,.26)};
+/* Saxophon */
+const SX=Array.from({length:27},(_,i)=>55+i);
+SX.forEach(m=>{const b=document.createElement("button");b.className="n";b.innerHTML=`<b>${DE[m%12]}</b><small>${label(m)}</small>`;
+  longPress(b,()=>{audio();b.classList.add("down");play("sax",m,0,.9);setTimeout(()=>b.classList.remove("down"),200)},()=>mark("sax:"+label(m),b));$("#sNotes").appendChild(b)});
+const sseq=(arr,step,dur)=>arr.forEach((m,i)=>m&&play("sax",m,i*step,dur));
+$("#sScale").onclick=()=>{audio();sseq([60,62,64,65,67,69,71,72],.42,.38)};
+$("#sLong").onclick=()=>{audio();play("sax",69,0,2.6)};
+$("#sJazz").onclick=()=>{audio();sseq([62,65,67,68,67,65,62,0,60,62],.19,.2)};
+$("#sMel").onclick=()=>{audio();sseq([67,72,76,79,76,72,74,72],.3,.28)};
 /* Flügel */
 const LO=60,HI=84;let pedal=false,base=60;const KB=$("#kb");
 const isB=m=>[1,3,6,8,10].includes(m%12);
@@ -161,7 +183,7 @@ let tt;function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("sh
 $("#copy").onclick=async()=>{const t=$("#fb").value.trim()||"Alles klingt gut 👍";try{await navigator.clipboard.writeText(t);toast("Kopiert ✓")}catch(e){$("#fb").select();toast("Text markiert – jetzt kopieren")}};
 $("#clr").onclick=()=>{bad.clear();document.querySelectorAll(".bad").forEach(x=>x.classList.remove("bad"));syncFb()};
 build();addEventListener("resize",()=>build());
-let started=false;const start=()=>{if(started)return;started=true;load("clar",CL,$("#cLoad"));load("piano",Array.from({length:HI-LO+1},(_,i)=>LO+i),$("#pLoad"))};
+let started=false;const start=()=>{if(started)return;started=true;load("clar",CL,$("#cLoad"));load("sax",SX,$("#sLoad"));load("piano",Array.from({length:HI-LO+1},(_,i)=>LO+i),$("#pLoad"))};
 addEventListener("pointerdown",start,{once:true});setTimeout(()=>{try{start()}catch(e){}},300);
 </script>
 </body>
