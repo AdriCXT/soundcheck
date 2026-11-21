@@ -139,7 +139,7 @@ function syncFb(){const ta=$("#fb"),keep=ta.value.split("\n").filter(l=>!l.start
 function longPress(el,onShort,onLong){let t=null,long=false;el.addEventListener("pointerdown",e=>{long=false;t=setTimeout(()=>{long=true;onLong()},600);onShort(e)});
   ["pointerup","pointerleave","pointercancel"].forEach(ev=>el.addEventListener(ev,()=>clearTimeout(t)))}
 /* Klarinette */
-const CL=[60,61,62,63,64,65,67,68,69,71,72,74,75,76,79];
+const CL=[60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,79];
 CL.forEach(m=>{const b=document.createElement("button");b.className="n";b.innerHTML=`<b>${DE[m%12]}</b><small>${label(m)}</small>`;
   longPress(b,()=>{audio();b.classList.add("down");play("clar",m,0,.9);setTimeout(()=>b.classList.remove("down"),200)},()=>mark("clar:"+label(m),b));$("#cNotes").appendChild(b)});
 const seq=(arr,step,dur)=>arr.forEach((m,i)=>m&&play("clar",m,i*step,dur));
