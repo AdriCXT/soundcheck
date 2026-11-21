@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Soundcheck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--em:#0c3a35;--teal:#1f7a70;--turq:#40e0d0;--gold:#c4a15a;--gold2:#e3c98d;--ivory:#f6f0e2;--muted:#5f6d69}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Jost,system-ui,sans-serif;background:var(--ivory);color:#1c2826;min-height:100vh;
+  background-image:repeating-linear-gradient(0deg,rgba(120,95,50,.035) 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,rgba(120,95,50,.03) 0 1px,transparent 1px 4px)}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+header{background:radial-gradient(70% 90% at 50% 30%,#17615a,#0c3a35 60%,#06221f);color:#f3ecdc;text-align:center;padding:56px 20px 46px;position:relative}
+header::after{content:"";position:absolute;inset:10px;border:1px solid rgba(196,161,90,.35);pointer-events:none}
+header .ov{font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold2)}
+header h1{font-family:"Cormorant Garamond",serif;font-weight:500;font-style:italic;font-size:clamp(42px,10vw,72px);line-height:1.05;margin-top:8px}
+header p{font-family:"Cormorant Garamond",serif;font-size:20px;color:#d9e9e3;margin-top:8px}
+main{max-width:860px;margin:0 auto;padding:34px 18px 60px}
+.card{background:#fffdf8;border:1px solid var(--gold);outline:1px solid var(--gold);outline-offset:-7px;padding:26px 22px;margin-bottom:28px;box-shadow:0 30px 60px -40px rgba(60,40,10,.5)}
+h2{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:34px;color:var(--em)}
+.sub{font-family:"Cormorant Garamond",serif;font-style:italic;color:var(--muted);font-size:18px;margin:2px 0 18px}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.n{min-width:64px;padding:10px 8px;border:1px solid #d6c9aa;border-radius:12px;background:#fff;text-align:center;transition:background .15s,transform .05s}
+.n b{display:block;font-family:"Cormorant Garamond",serif;font-size:22px;color:var(--em);font-weight:600}
+.n small{font-size:11px;color:var(--muted)}
+.n:active,.n.down{transform:translateY(1px);background:#e4f8f4;border-color:var(--turq)}
+.n.bad{border-color:#e11d48;background:#fff1f3}.n.bad b{color:#be123c}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.ctl button{padding:9px 16px;border-radius:999px;border:1px solid var(--gold);background:#fff;color:var(--em);font-size:14px}
+.ctl button.pri{background:var(--em);color:var(--gold2);border-color:var(--em)}
+.ctl button.on{background:var(--gold);color:#1a1a1a;border-color:var(--gold)}
+.hint{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.5}
+.load{font-size:13px;color:var(--teal);margin-bottom:12px}
+/* Flügel */
+.piano{background:linear-gradient(180deg,#1b1b1d,#0b0b0c 60%,#141416);border-radius:16px 16px 10px 10px;padding:14px 12px}
+.felt{background:#7a1f2b;height:6px;border-radius:2px;margin:0 2px}
+.kb{position:relative;display:flex;height:clamp(150px,26vw,210px);touch-action:none;user-select:none;-webkit-user-select:none}
+.wk{position:relative;flex:1;margin:0 1px;border-radius:0 0 7px 7px;background:linear-gradient(180deg,#f3f1ea,#fffefb 12%,#fbfaf6 88%,#e9e6dd);
+  box-shadow:inset 0 -6px 0 #d8d3c6,0 2px 2px rgba(0,0,0,.4);display:flex;align-items:flex-end;justify-content:center;padding-bottom:12px;font-size:15px;font-weight:700;color:#2f2b25;cursor:pointer}
+.wk.down{transform:translateY(2px);background:linear-gradient(180deg,#e4f8f4,#f4fffc 30%,#e8f7f3);box-shadow:inset 0 -2px 0 #d1ccbe,inset 0 0 18px rgba(64,224,208,.55)}
+.blk{position:absolute;top:0;width:calc(var(--ww)*.6);height:62%;z-index:2;border-radius:0 0 5px 5px;background:linear-gradient(180deg,#2a2a2c,#0d0d0e 70%,#1d1d1f);
+  box-shadow:inset 0 -5px 0 #333,0 3px 4px rgba(0,0,0,.55);cursor:pointer;display:flex;align-items:flex-end;justify-content:center;padding-bottom:9px;font-size:11px;font-weight:700;color:#f4f1e8}
+.blk.down{transform:translateY(2px);background:linear-gradient(180deg,#1f4a46,#0b2422);box-shadow:0 0 14px rgba(64,224,208,.7)}
+.wk.bad{background:linear-gradient(180deg,#ffe4ea,#fff1f3)}.blk.bad{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
+.pnav{display:none;justify-content:space-between;align-items:center;margin-top:10px;color:#9a9a9a;font-size:12px}
+.piano.narrow .pnav{display:flex}
+.pnav button{padding:6px 14px;border-radius:999px;border:1px solid rgba(227,201,141,.45);color:var(--gold2);font-size:13px}
+textarea{width:100%;min-height:110px;border:1px solid #d6c9aa;border-radius:12px;padding:12px;font:inherit;font-size:15px;background:#fff;resize:vertical}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--em);color:var(--gold2);padding:10px 18px;border-radius:999px;opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{text-align:center;font-size:11px;color:var(--muted);padding:0 20px 30px}
+</style>
+</head>
+<body>
+<header>
+  <div class="ov">Probe · Soundcheck</div>
+  <h1>Klingt das richtig?</h1>
+  <p>Klarinette &amp; Flügel – einmal durchhören, bitte.</p>
+</header>
+<main>
+  <div class="card">
+    <h2>Klarinette</h2>
+    <div class="sub">Jeder Ton einzeln antippen. Klingt einer falsch? Lange drücken markiert ihn.</div>
+    <div class="load" id="cLoad">Lade Aufnahmen …</div>
+    <div class="row" id="cNotes"></div>
+    <div class="ctl">
+      <button class="pri" id="cScale">▶ Tonleiter</button>
+      <button id="cElise">▶ „Für Elise“</button>
+      <button id="cLong">▶ Langer Ton (A)</button>
+      <button id="cMel">▶ Kurze Melodie</button>
+    </div>
+    <div class="hint">Tipp: Am iPhone muss der Lautlos-Schalter aus sein.</div>
+  </div>
+
+  <div class="card">
+    <h2>Flügel</h2>
+    <div class="sub">Spielen, Akkorde probieren, mit dem Finger über die Tasten wischen. Lange drücken markiert eine Taste als falsch.</div>
+    <div class="load" id="pLoad">Lade Aufnahmen …</div>
+    <div class="piano" id="piano">
+      <div class="felt"></div>
+      <div class="kb" id="kb"></div>
+      <div class="pnav"><button id="pDown">◀ tiefer</button><span id="pRange"></span><button id="pUp">höher ▶</button></div>
+    </div>
+    <div class="ctl">
+      <button id="pPedal">Pedal</button>
+      <button class="pri" id="pScale">▶ Tonleiter</button>
+      <button id="pChords">▶ Akkorde</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Rückmeldung</h2>
+    <div class="sub">Was sollte anders klingen? Markierte Töne stehen schon drin.</div>
+    <textarea id="fb" placeholder="z. B. „Das hohe G klingt zu dünn“, „Klavier insgesamt zu leise“ …"></textarea>
+    <div class="ctl"><button class="pri" id="copy">📋 Text kopieren</button><button id="clr">Markierungen löschen</button></div>
+  </div>
+</main>
+<footer>Klänge: Musyng Kite Soundfont (CC BY-SA 3.0)</footer>
+<div class="toast" id="toast"></div>
+<script>
+const $=s=>document.querySelector(s);
+const DE=["C","Cis","D","Dis","E","F","Fis","G","Gis","A","B","H"],NM=["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
+const name=m=>NM[m%12]+(Math.floor(m/12)-1),label=m=>DE[m%12]+(Math.floor(m/12)-1);
+let ac=null;function audio(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==="suspended")ac.resume()}catch(e){}return ac}
+let bus=null,pbus=null;
+function rev(c,len,dec,wetv){const g=c.createGain(),n=Math.floor(c.sampleRate*len),ir=c.createBuffer(2,n,c.sampleRate);
+  for(let ch=0;ch<2;ch++){const d=ir.getChannelData(ch);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,dec)}
+  const cv=c.createConvolver();cv.buffer=ir;const w=c.createGain();w.gain.value=wetv;g.connect(c.destination);g.connect(cv);cv.connect(w);w.connect(c.destination);return g}
+const getBus=c=>bus||(bus=rev(c,1.4,3.2,.16)),getPBus=c=>pbus||(pbus=rev(c,4.2,2.2,.55));
+const buf={clar:{},piano:{}};
+function load(kind,list,el){const c=audio();let n=0;return Promise.all(list.map(m=>fetch(`sounds/${kind==="clar"?"clarinet":kind}-${name(m)}.mp3`).then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()})
+  .then(a=>new Promise((res,rej)=>c.decodeAudioData(a,res,rej))).then(b=>{buf[kind][m]=b;el.textContent=`Lade Aufnahmen … ${++n}/${list.length}`}).catch(()=>{})))
+  .then(()=>{const k=Object.keys(buf[kind]).length;el.textContent=k?`✓ ${k} echte Aufnahmen geladen`:"Aufnahmen konnten nicht geladen werden"})}
+const voices={};
+function play(kind,m,when=0,dur=null,vol=.9){const c=audio(),b=buf[kind][m];if(!c||!b)return null;const t=c.currentTime+when,s=c.createBufferSource(),g=c.createGain();
+  s.buffer=b;g.gain.value=vol;s.connect(g);g.connect(kind==="piano"&&pedal?getPBus(c):getBus(c));s.start(t);
+  if(dur){g.gain.setValueAtTime(vol,t+dur);g.gain.exponentialRampToValueAtTime(.0001,t+dur+.18);s.stop(t+dur+.25)}return {s,g}}
+function stopV(v,fast){if(!v)return;const c=audio(),t=c.currentTime;v.g.gain.cancelScheduledValues(t);v.g.gain.setValueAtTime(v.g.gain.value,t);v.g.gain.exponentialRampToValueAtTime(.0001,t+(fast?.05:.16));try{v.s.stop(t+.25)}catch(e){}}
+const bad=new Set();
+function mark(id,el){bad.has(id)?bad.delete(id):bad.add(id);el.classList.toggle("bad",bad.has(id));syncFb();toast(bad.has(id)?`${id.split(":")[1]} als falsch markiert`:"Markierung entfernt");try{navigator.vibrate&&navigator.vibrate(20)}catch(e){}}
+function syncFb(){const ta=$("#fb"),keep=ta.value.split("\n").filter(l=>!l.startsWith("• "));const L=[...bad].sort().map(id=>{const [k,n]=id.split(":");return `• ${k==="clar"?"Klarinette":"Flügel"} ${n} klingt nicht richtig`});
+  ta.value=[...L,...keep].join("\n").replace(/^\n+/,"")}
+function longPress(el,onShort,onLong){let t=null,long=false;el.addEventListener("pointerdown",e=>{long=false;t=setTimeout(()=>{long=true;onLong()},600);onShort(e)});
+  ["pointerup","pointerleave","pointercancel"].forEach(ev=>el.addEventListener(ev,()=>clearTimeout(t)))}
+/* Klarinette */
+const CL=[60,61,62,63,64,65,67,68,69,71,72,74,75,76,79];
+CL.forEach(m=>{const b=document.createElement("button");b.className="n";b.innerHTML=`<b>${DE[m%12]}</b><small>${label(m)}</small>`;
+  longPress(b,()=>{audio();b.classList.add("down");play("clar",m,0,.9);setTimeout(()=>b.classList.remove("down"),200)},()=>mark("clar:"+label(m),b));$("#cNotes").appendChild(b)});
+const seq=(arr,step,dur)=>arr.forEach((m,i)=>m&&play("clar",m,i*step,dur));
+$("#cScale").onclick=()=>{audio();seq([60,62,64,65,67,69,71,72],.42,.38)};
+$("#cLong").onclick=()=>{audio();play("clar",69,0,2.6)};
+$("#cMel").onclick=()=>{audio();seq([67,72,76,79,76,72,74,72],.3,.28)};
+$("#cElise").onclick=()=>{audio();seq([76,75,76,75,76,71,74,72,69,0,60,64,69,71,0,64,68,71,72],.28,.26)};
+/* Flügel */
+const LO=60,HI=84;let pedal=false,base=60;const KB=$("#kb");
+const isB=m=>[1,3,6,8,10].includes(m%12);
+function build(){const narrow=KB.clientWidth<560;$("#piano").classList.toggle("narrow",narrow);const lo=narrow?base:LO,hi=narrow?Math.min(HI,base+12):HI;KB.innerHTML="";const wh=[];
+  for(let m=lo;m<=hi;m++)if(!isB(m)){const k=document.createElement("div");k.className="wk"+(bad.has("piano:"+label(m))?" bad":"");k.dataset.m=m;k.textContent=DE[m%12];KB.appendChild(k);wh.push(k)}
+  const ww=KB.clientWidth/wh.length;KB.style.setProperty("--ww",ww+"px");
+  for(let m=lo;m<=hi;m++)if(isB(m)){const i=wh.findIndex(w=>+w.dataset.m===m-1);const k=document.createElement("div");k.className="blk"+(bad.has("piano:"+label(m))?" bad":"");k.dataset.m=m;k.style.left=((i+1)*ww-ww*.3)+"px";k.textContent=DE[m%12];KB.appendChild(k)}
+  $("#pRange").textContent=`${label(lo)} – ${label(hi)}`}
+const act={},lp={};
+const keyAt=(x,y)=>{const e=document.elementFromPoint(x,y);return e&&e.closest(".wk,.blk")};
+function down(m){const el=KB.querySelector(`[data-m="${m}"]`);el&&el.classList.add("down");stopV(voices[m],true);voices[m]=play("piano",m)}
+function up(m){const el=KB.querySelector(`[data-m="${m}"]`);el&&el.classList.remove("down");if(!pedal){stopV(voices[m]);delete voices[m]}}
+KB.addEventListener("pointerdown",e=>{const k=e.target.closest(".wk,.blk");if(!k)return;e.preventDefault();audio();try{KB.setPointerCapture(e.pointerId)}catch(err){}
+  const m=+k.dataset.m;act[e.pointerId]=m;down(m);clearTimeout(lp[e.pointerId]);lp[e.pointerId]=setTimeout(()=>{if(act[e.pointerId]===m){mark("piano:"+label(m),k)}},650)});
+KB.addEventListener("pointermove",e=>{if(!(e.pointerId in act))return;const k=keyAt(e.clientX,e.clientY);if(!k||!KB.contains(k))return;const m=+k.dataset.m;
+  if(m!==act[e.pointerId]){clearTimeout(lp[e.pointerId]);up(act[e.pointerId]);act[e.pointerId]=m;down(m)}});
+const pu=e=>{if(!(e.pointerId in act))return;clearTimeout(lp[e.pointerId]);up(act[e.pointerId]);delete act[e.pointerId]};
+KB.addEventListener("pointerup",pu);KB.addEventListener("pointercancel",pu);
+$("#pPedal").onclick=()=>{pedal=!pedal;$("#pPedal").classList.toggle("on",pedal);$("#pPedal").textContent=pedal?"Pedal an":"Pedal";if(!pedal)Object.keys(voices).forEach(m=>{stopV(voices[m]);delete voices[m]})};
+$("#pDown").onclick=()=>{base=Math.max(LO,base-12);build()};$("#pUp").onclick=()=>{base=Math.min(HI-12,base+12);build()};
+$("#pScale").onclick=()=>{audio();[60,62,64,65,67,69,71,72,74,76,77,79,81,83,84].forEach((m,i)=>play("piano",m,i*.24,.5))};
+$("#pChords").onclick=()=>{audio();[[60,64,67],[65,69,72],[67,71,74],[60,64,67,72]].forEach((ch,i)=>ch.forEach(m=>play("piano",m,i*.9,.85,.7)))};
+/* Rückmeldung */
+let tt;function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("show"),1800)}
+$("#copy").onclick=async()=>{const t=$("#fb").value.trim()||"Alles klingt gut 👍";try{await navigator.clipboard.writeText(t);toast("Kopiert ✓")}catch(e){$("#fb").select();toast("Text markiert – jetzt kopieren")}};
+$("#clr").onclick=()=>{bad.clear();document.querySelectorAll(".bad").forEach(x=>x.classList.remove("bad"));syncFb()};
+build();addEventListener("resize",()=>build());
+let started=false;const start=()=>{if(started)return;started=true;load("clar",CL,$("#cLoad"));load("piano",Array.from({length:HI-LO+1},(_,i)=>LO+i),$("#pLoad"))};
+addEventListener("pointerdown",start,{once:true});setTimeout(()=>{try{start()}catch(e){}},300);
+</script>
+</body>
+</html>
